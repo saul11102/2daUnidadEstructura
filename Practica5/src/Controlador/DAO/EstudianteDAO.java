@@ -1,0 +1,194 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
+package Controlador.DAO;
+
+import Controlador.ed.lista.ListaEnlazada;
+import Modelo.Estudiante;
+import java.io.IOException;
+
+/**
+ *
+ * @author alejandro
+ */
+public class EstudianteDAO extends AdaptadorDAO<Estudiante> {
+
+    private Estudiante estudiante;
+
+    public EstudianteDAO() {
+        super(Estudiante.class);
+    }
+
+    public Estudiante getEstudiante() {
+        if (this.estudiante == null) {
+            this.estudiante = new Estudiante();
+        }
+        return estudiante;
+    }
+
+    public void setEstudiante(Estudiante estudiante) {
+        this.estudiante = estudiante;
+    }
+
+    public void guardar() throws IOException {
+        estudiante.setId(generarId());
+        this.guardar(estudiante);
+    }
+
+    public void modificar(Integer pos) throws Exception {
+        this.modificar(estudiante, pos);
+    }
+
+    private Integer generateID() {
+        return listar().size() + 1;
+    }
+
+    public ListaEnlazada<Estudiante> ordenarPorNombre(ListaEnlazada<Estudiante> estudiantes) throws Exception {
+        int n = estudiantes.size();
+
+        for (int i = 0; i < n - 1; i++) {
+            int minIndex = i;
+
+            for (int j = i + 1; j < n; j++) {
+                if (estudiantes.get(j).getNombre().compareToIgnoreCase(estudiantes.get(minIndex).getNombre()) < 0) {
+                    minIndex = j;
+                }
+            }
+
+            if (minIndex != i) {
+                Estudiante temp = estudiantes.get(i);
+                estudiantes.modificar(estudiantes.get(minIndex), i);
+                estudiantes.modificar(temp, minIndex);
+            }
+        }
+
+        return estudiantes;
+    }
+
+    public ListaEnlazada<Estudiante> ordenarPorCedula(ListaEnlazada<Estudiante> estudiantes) throws Exception {
+        int n = estudiantes.size();
+
+        for (int i = 0; i < n - 1; i++) {
+            int minIndex = i;
+
+            for (int j = i + 1; j < n; j++) {
+                if (estudiantes.get(j).getCedula().compareToIgnoreCase(estudiantes.get(minIndex).getCedula()) < 0) {
+                    minIndex = j;
+                }
+            }
+
+            if (minIndex != i) {
+                Estudiante temp = estudiantes.get(i);
+                estudiantes.modificar(estudiantes.get(minIndex), i);
+                estudiantes.modificar(temp, minIndex);
+            }
+        }
+
+        return estudiantes;
+    }
+
+    public ListaEnlazada<Estudiante> ordenarPorCiudad(ListaEnlazada<Estudiante> estudiantes) throws Exception {
+        int n = estudiantes.size();
+
+        for (int i = 0; i < n - 1; i++) {
+            int minIndex = i;
+
+            for (int j = i + 1; j < n; j++) {
+                String ciudadActual = estudiantes.get(j).getDireccion().getCiudad();
+                String ciudadMin = estudiantes.get(minIndex).getDireccion().getCiudad();
+
+                if (ciudadActual.compareToIgnoreCase(ciudadMin) < 0) {
+                    minIndex = j;
+                }
+            }
+
+            if (minIndex != i) {
+                Estudiante temp = estudiantes.get(i);
+                estudiantes.modificar(estudiantes.get(minIndex), i);
+                estudiantes.modificar(temp, minIndex);
+            }
+        }
+
+        return estudiantes;
+    }
+
+    public ListaEnlazada<Estudiante> buscarEstudianteBinario(ListaEnlazada<Estudiante> aux, String clave, String tipoBusqueda) throws Exception {
+        ListaEnlazada<Estudiante> estudiantes = obtenerListaOrdenada(aux, tipoBusqueda);
+        ListaEnlazada<Estudiante> estudiantesEncontrados = new ListaEnlazada<>();
+
+        int izquierda = 0;
+        int derecha = estudiantes.size() - 1;
+
+        while (izquierda <= derecha) {
+            int medio = izquierda + (derecha - izquierda) / 2;
+            Estudiante estudianteActual = estudiantes.get(medio);
+            String claveEstudiante = getClaveEstudiante(estudianteActual, tipoBusqueda);
+
+            if (claveEstudiante.toLowerCase().contains(clave.toLowerCase())) {
+                estudiantesEncontrados.insertarNodo(estudianteActual);
+                break;
+            }
+
+            if (claveEstudiante.toLowerCase().compareTo(clave.toLowerCase()) >= 0) {
+                derecha = medio - 1;
+            } else {
+                izquierda = medio + 1;
+            }
+        }
+
+        return estudiantesEncontrados;
+    }
+
+    private ListaEnlazada<Estudiante> obtenerListaOrdenada(ListaEnlazada<Estudiante> aux, String tipoBusqueda) throws Exception {
+        switch (tipoBusqueda.toLowerCase()) {
+            case "cedula":
+                return ordenarPorCedula(aux);
+            case "nombre":
+                return ordenarPorNombre(aux);
+            case "ciudad":
+                return ordenarPorCiudad(aux);
+            default:
+                throw new IllegalArgumentException("Tipo de búsqueda inválido: " + tipoBusqueda);
+        }
+    }
+
+    public ListaEnlazada<Estudiante> buscarEstudianteLinealBinaria(ListaEnlazada<Estudiante> aux, String clave, String tipoBusqueda) throws Exception {
+        ListaEnlazada<Estudiante> estudiantes = null;
+
+        if (tipoBusqueda.equalsIgnoreCase("cedula")) {
+            estudiantes = ordenarPorCedula(aux);
+        } else if (tipoBusqueda.equalsIgnoreCase("nombre")) {
+            estudiantes = ordenarPorNombre(aux);
+        } else if (tipoBusqueda.equalsIgnoreCase("ciudad")) {
+            estudiantes = ordenarPorCiudad(aux);
+        } else {
+            throw new IllegalArgumentException("Tipo de búsqueda inválido: " + tipoBusqueda);
+        }
+
+        ListaEnlazada<Estudiante> estudiantesEncontrados = new ListaEnlazada<>();
+
+        for (int i = 0; i < estudiantes.size(); i++) {
+            Estudiante estudiante = estudiantes.get(i);
+            String claveEstudiante = getClaveEstudiante(estudiante, tipoBusqueda);
+
+            if (claveEstudiante.toLowerCase().contains(clave.toLowerCase())) {
+                estudiantesEncontrados.insertarNodo(estudiante);
+            }
+        }
+
+        return estudiantesEncontrados;
+    }
+
+    private String getClaveEstudiante(Estudiante estudiante, String tipoBusqueda) {
+        if (tipoBusqueda.equalsIgnoreCase("cedula")) {
+            return estudiante.getCedula();
+        } else if (tipoBusqueda.equalsIgnoreCase("nombre")) {
+            return estudiante.getNombre();
+        } else if (tipoBusqueda.equalsIgnoreCase("ciudad")) {
+            return estudiante.getDireccion().getCiudad();
+        }
+        return "";
+    }
+
+}
