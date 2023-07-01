@@ -8,24 +8,38 @@ package Modelo;
  *
  * @author alejandro
  */
-public class Direccion {
-    private String calle;
-    private String ciudad;
+    public class Direccion {
+        private Integer id;
+        private String ciudad;
+        private String calle;
 
-    public String getCalle() {
-        return calle;
-    }
+        public Integer getId() {
+            return id;
+        }
 
-    public void setCalle(String calle) {
-        this.calle = calle;
-    }
+        public void setId(Integer id) {
+            this.id = id;
+        }
 
-    public String getCiudad() {
-        return ciudad;
-    }
+        public String getCalle() {
+            return calle;
+        }
 
-    public void setCiudad(String ciudad) {
-        this.ciudad = ciudad;
+        public void setCalle(String calle) {
+            this.calle = calle;
+        }
+
+        public String getCiudad() {
+            return ciudad;
+        }
+
+        public void setCiudad(String ciudad) {
+            this.ciudad = ciudad;
+        }
+
+        @Override
+        public String toString() {
+
+            return getCalle().toString();
+        }
     }
-    
-}

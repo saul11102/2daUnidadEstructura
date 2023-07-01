@@ -4,6 +4,7 @@
  */
 package Vista;
 
+import Controlador.DAO.DireccionDAO;
 import Controlador.DAO.EstudianteDAO;
 import Modelo.Direccion;
 import Vista.Modelo.Tabla.ModeloTablaEstudiante;
@@ -16,10 +17,9 @@ import java.util.logging.Logger;
  * @author alejandro
  */
 public class FrmEstudiante extends javax.swing.JDialog {
-
+    private DireccionDAO dd = new DireccionDAO();
     private ModeloTablaEstudiante modelo = new ModeloTablaEstudiante();
     private EstudianteDAO ed = new EstudianteDAO();
-    private Direccion direccion = new Direccion();
 
     /**
      * Creates new form FrmEstudiante
@@ -342,10 +342,10 @@ public class FrmEstudiante extends javax.swing.JDialog {
             String atributo = cbxAtributo.getSelectedItem().toString();
             switch (metodo) {
                 case "Binaria":
-                    modelo.setLista(ed.buscarEstudianteBinario(ed.listar(), clave, atributo));
+                    modelo.setLista(ed.buscarEstudianteBinario(clave, atributo));
                     break;
                 case "Lineal Binaria":
-                    modelo.setLista(ed.buscarEstudianteLinealBinaria(ed.listar(), clave, atributo));
+                    modelo.setLista(ed.buscarEstudianteLinealBinario(clave, atributo));
                     break;
             }
             tblEstudiantes.setModel(modelo);
@@ -358,12 +358,14 @@ public class FrmEstudiante extends javax.swing.JDialog {
 
     private void guardar() {
         try {
-            direccion.setCalle(txtCalle.getText().toString());
-            direccion.setCiudad(txtCIudad.getText().toString());
-            ed.getEstudiante().setDireccion(direccion);
+            dd.getDireccion().setCalle(txtCalle.getText().toString());
+            dd.getDireccion().setCiudad(txtCIudad.getText().toString());
+            dd.guardar();
+            ed.getEstudiante().setId_Direccion(dd.getDireccion().getId());
             ed.getEstudiante().setCedula(txtCedula.getText().toString());
             ed.getEstudiante().setNombre(txtNombre.getText().toString());
             ed.guardar();
+            dd.setDireccion(null);
             ed.setEstudiante(null);
             cargarTabla();
         } catch (IOException ex) {

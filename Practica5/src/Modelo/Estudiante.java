@@ -12,7 +12,7 @@ public class Estudiante {
     private int id;
     private String cedula;
     private String nombre;
-    private Direccion direccion;
+    private Integer id_Direccion;
 
     public int getId() {
         return id;
@@ -38,12 +38,12 @@ public class Estudiante {
         this.nombre = nombre;
     }
 
-    public Direccion getDireccion() {
-        return direccion;
+    public Integer getId_Direccion() {
+        return id_Direccion;
     }
 
-    public void setDireccion(Direccion direccion) {
-        this.direccion = direccion;
+    public void setId_Direccion(Integer id_Direccion) {
+        this.id_Direccion = id_Direccion;
     }
 
     @Override

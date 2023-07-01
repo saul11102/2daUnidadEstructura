@@ -4,7 +4,9 @@
  */
 package Vista.Modelo.Tabla;
 
+import Controlador.DAO.DireccionDAO;
 import Controlador.ed.lista.ListaEnlazada;
+import Modelo.Direccion;
 import Modelo.Estudiante;
 import javax.swing.table.AbstractTableModel;
 
@@ -12,7 +14,8 @@ import javax.swing.table.AbstractTableModel;
  *
  * @author alejandro
  */
-public class ModeloTablaEstudiante extends AbstractTableModel{
+public class ModeloTablaEstudiante extends AbstractTableModel {
+
     private ListaEnlazada<Estudiante> lista = new ListaEnlazada<>();
 
     @Override
@@ -39,9 +42,11 @@ public class ModeloTablaEstudiante extends AbstractTableModel{
             case 1:
                 return (s != null) ? s.getCedula() : "No definido";
             case 2:
-                return (s != null) ? s.getDireccion().getCalle() : "No definido";
+                Direccion direccionCalle = new DireccionDAO().obtener(s.getId_Direccion());
+                return (direccionCalle != null) ? direccionCalle.getCalle() : "No definido";
             case 3:
-                return (s != null) ? s.getDireccion().getCiudad() : "No definido";
+                Direccion direccionCiudad = new DireccionDAO().obtener(s.getId_Direccion());
+                return (direccionCiudad != null) ? direccionCiudad.getCiudad() : "No definido";
             default:
                 return null;
         }
